@@ -135,7 +135,9 @@ namespace eval dotlrn_bboard {
 	set workspace_portal_id [dotlrn::get_workspace_portal_id $user_id]
 
 	# Add the portlet here
-	bboard_portlet::add_self_to_page $workspace_portal_id $package_id
+	if { $workspace_portal_id != "" } {
+            bboard_portlet::add_self_to_page $workspace_portal_id $package_id
+        }
     }
 
     ad_proc -public remove_user {
@@ -163,7 +165,9 @@ namespace eval dotlrn_bboard {
 	set workspace_portal_id [dotlrn::get_workspace_portal_id $user_id]
 
 	# Add the portlet here
-	bboard_portlet::remove_self_from_page $workspace_portal_id $package_id
+        if { $workspace_portal_id != "" } {
+            bboard_portlet::remove_self_from_page $workspace_portal_id $package_id
+        }
     }
 	
 }
