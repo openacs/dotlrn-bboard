@@ -19,7 +19,7 @@
 
         <files>
             <file type="package_spec" path="dotlrn-bboard.info"/>
-            <file type="data_model" db_type="oracle" path="sql/oracle/dotlrn-bboard-init.sql"/>
+            <file type="data_model_create" db_type="oracle" path="sql/oracle/dotlrn-bboard-create.sql"/>
             <file type="tcl_procs" path="tcl/dotlrn-bboard-procs.tcl"/>
         </files>
         <parameters>
