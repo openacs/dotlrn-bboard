@@ -103,7 +103,6 @@ namespace eval dotlrn_bboard {
 
     ad_proc -public add_user {
 	community_id
-	user_id
     } {
 	Called when the user is initially added as a dotlrn user.
 	For one-time init stuff
