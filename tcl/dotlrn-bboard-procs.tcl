@@ -19,6 +19,11 @@ ad_library {
 
 namespace eval dotlrn_bboard {
     
+    ad_proc -private my_package_key {
+    } {
+        return "dotlrn-bboard"
+    }
+
     ad_proc -public applet_key {} {
 	get the applet key
     } {
@@ -30,13 +35,6 @@ namespace eval dotlrn_bboard {
 	get the package_key this applet deals with
     } {
 	return "bboard"
-    }
-
-    ad_proc portal_element_key {
-    } {
-	return the portal element key
-    } {
-	return "bboard-portlet"
     }
 
     ad_proc -public get_pretty_name {
@@ -66,8 +64,22 @@ namespace eval dotlrn_bboard {
 	set package_key [package_key]
 	set package_id [dotlrn::instantiate_and_mount -mount_point "forums" $community_id $package_key]
 
-	# set up a forum inside that instance, with context set to the package ID of the bboard package
-	bboard_forum_new -bboard_id $package_id -short_name "Discussions" -context_id $package_id
+        
+        set auto_create_forum_p [ad_parameter \
+                -package_id [apm_package_id_from_key [my_package_key]] \
+                "auto_create_forum_p" "f"]
+
+        set auto_create_forum_name [ad_parameter \
+                -package_id [apm_package_id_from_key [my_package_key]] \
+                "auto_create_forum_name" "Discussions"]
+
+	if {$auto_create_forum_p == "t"} {
+            # set up a forum inside that instance, with context set to the
+            # package ID of the bboard package    
+            bboard_forum_new -bboard_id $package_id \
+                    -short_name $auto_create_forum_name \
+                    -context_id $package_id
+        }
 
 	# get the portal_template_id by callback
 	set pt_id [dotlrn_community::get_portal_template_id $community_id]

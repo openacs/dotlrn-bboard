@@ -24,7 +24,8 @@
             <file type="tcl_procs" path="tcl/dotlrn-bboard-procs.tcl"/>
         </files>
         <parameters>
-        <!-- No version parameters -->
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="auto_create_forum_p"  default="t" description="Should we create a forum by default when added to a community?"/>
+            <parameter datatype="string"  min_n_values="1"  max_n_values="1"  name="auto_create_forum_name"  default="Discussions" description="The name of the auto created forum"/>
         </parameters>
 
     </version>
