@@ -72,10 +72,8 @@ namespace eval dotlrn_bboard {
     }
 
     ad_proc -public remove_applet {
-        community_id
-        package_id
     } {
-        remove the applet from the community
+        remove the applet from dotlrn
     } {
     }
 
@@ -84,7 +82,9 @@ namespace eval dotlrn_bboard {
     } {
         Add the bboard applet to a dotlrn community
     } {
-        set portal_id [dotlrn_community::get_portal_id -community_id $community_id]
+        set portal_id [dotlrn_community::get_portal_id \
+                -community_id $community_id
+        ]
 
         bboard_portlet::make_self_available $portal_id
 
@@ -94,7 +94,11 @@ namespace eval dotlrn_bboard {
         }
 
         # Create and Mount
-        set package_id [dotlrn::instantiate_and_mount -mount_point "forums" $community_id [package_key]]
+        set package_id [dotlrn::instantiate_and_mount \
+                -mount_point "forums" \
+                $community_id\
+                [package_key]
+        ]
 
         set auto_create_forum_p [ad_parameter \
             -package_id [apm_package_id_from_key "dotlrn-bboard"] \
@@ -109,18 +113,26 @@ namespace eval dotlrn_bboard {
         if {$auto_create_forum_p == "t"} {
             # set up a forum inside that instance, with context set to the
             # package ID of the bboard package
-            bboard_forum_new -bboard_id $package_id -short_name $auto_create_forum_name -context_id $package_id
+            bboard_forum_new \
+                    -bboard_id $package_id \
+                    -short_name $auto_create_forum_name \
+                    -context_id $package_id
         }
 
         bboard_portlet::add_self_to_page $portal_id $package_id
 
         # set up the DS for the admin page
-        set admin_portal_id [dotlrn_community::get_admin_portal_id -community_id $community_id]
+        set admin_portal_id [dotlrn_community::get_admin_portal_id \
+                -community_id $community_id
+        ]
         bboard_admin_portlet::make_self_available $admin_portal_id
         bboard_admin_portlet::add_self_to_page $admin_portal_id $package_id
 
         # Set up permissions for basic members (Admins inherit no problem)
-        set members [dotlrn_community::get_rel_segment_id -community_id $community_id -rel_type dotlrn_member_rel]
+        set members [dotlrn_community::get_rel_segment_id \
+                -community_id $community_id \
+                -rel_type dotlrn_member_rel
+        ]
         ad_permission_grant $members $package_id bboard_read_forum
         ad_permission_grant $members $package_id bboard_read_category
         ad_permission_grant $members $package_id bboard_read_message
@@ -128,6 +140,14 @@ namespace eval dotlrn_bboard {
 
         # return the package_id
         return $package_id
+    }
+
+    ad_proc -public remove_applet_from_community {
+        community_id
+    } {
+        remove the applet from the given community
+    } {
+        ad_return_complaint 1 "aks1"
     }
 
     ad_proc -public add_user {
@@ -150,7 +170,10 @@ namespace eval dotlrn_bboard {
     } {
         Add a user to a specific dotlrn community
     } {
-        set package_id [dotlrn_community::get_applet_package_id $community_id [applet_key]]
+        set package_id [dotlrn_community::get_applet_package_id \
+                $community_id \
+                [applet_key]
+        ]
         set portal_id [dotlrn::get_workspace_portal_id $user_id]
 
         set element_id [bboard_portlet::add_self_to_page $portal_id $package_id]
@@ -163,7 +186,10 @@ namespace eval dotlrn_bboard {
     } {
         Remove a user from a community
     } {
-        set package_id [dotlrn_community::get_applet_package_id $community_id [applet_key]]
+        set package_id [dotlrn_community::get_applet_package_id \
+                $community_id \
+                [applet_key]
+        ]
         set portal_id [dotlrn::get_workspace_portal_id $user_id]
 
         bboard_portlet::remove_self_from_page $portal_id $package_id
