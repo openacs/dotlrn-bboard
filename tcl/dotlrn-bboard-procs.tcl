@@ -113,8 +113,6 @@ namespace eval dotlrn_bboard {
     } {
 	remove the applet from the community
     } {
-	# Remove all instances of the bboard portlet! (this is some serious stuff!)
-
 	# Dropping all messages, forums
 
 	# Killing the package
