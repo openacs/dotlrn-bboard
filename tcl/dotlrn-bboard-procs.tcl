@@ -185,8 +185,8 @@ namespace eval dotlrn_bboard {
     } {
         set portal_id [dotlrn::get_portal_id -user_id $user_id]
         set package_id [dotlrn_community::get_applet_package_id \
-                            $community_id \
-                            [applet_key]
+            -community_id $community_id \
+            -applet_key [applet_key]
         ]
         set args [ns_set create]
         ns_set put $args package_id $package_id
@@ -208,8 +208,8 @@ namespace eval dotlrn_bboard {
     } {
         set portal_id [dotlrn::get_portal_id -user_id $user_id]
         set package_id [dotlrn_community::get_applet_package_id \
-                            $community_id \
-                            [applet_key]
+            -community_id $community_id \
+            -applet_key [applet_key]
         ]
 
         set args [ns_set create]
@@ -217,6 +217,7 @@ namespace eval dotlrn_bboard {
 
         remove_portlet $portal_id $args
     }
+
     ad_proc -public add_portlet {
         portal_id
     } {
