@@ -34,7 +34,7 @@ namespace eval dotlrn_bboard {
     } {
 	get the package_key this applet deals with
     } {
-	return "bboard"
+	return "sloan-bboard"
     }
 
     ad_proc -public get_pretty_name {
