@@ -64,7 +64,7 @@ namespace eval dotlrn_bboard {
     } {
 	# Create and Mount
 	set package_key [package_key]
-	set package_id [dotlrn::instantiate_and_mount $community_id $package_key]
+	set package_id [dotlrn::instantiate_and_mount -mount_point "forums" $community_id $package_key]
 
 	# set up a forum inside that instance, with context set to the package ID of the bboard package
 	bboard_forum_new -bboard_id $package_id -short_name "Discussions" -context_id $package_id
