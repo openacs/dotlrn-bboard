@@ -14,23 +14,13 @@
 #  details.
 #
 
-
-
-#
-# Procs for DOTLRN Bboard Applet
-# Copyright 2001 OpenForce, inc.
-# Distributed under the GNU GPL v2
-#
-# October 5th, 2001
-#
-
 ad_library {
 
     Procs to set up the dotLRN Bboard applet
 
     @author ben@openforce.net,arjun@openforce.net
     @creation-date 2001-10-05
-
+    @version $Id$
 }
 
 namespace eval dotlrn_bboard {
@@ -86,8 +76,6 @@ namespace eval dotlrn_bboard {
                 -community_id $community_id
         ]
 
-        bboard_portlet::make_self_available $portal_id
-
         if {[dotlrn_community::dummy_comm_p -community_id $community_id]} {
             bboard_portlet::add_self_to_page $portal_id 0
             return
@@ -125,7 +113,6 @@ namespace eval dotlrn_bboard {
         set admin_portal_id [dotlrn_community::get_admin_portal_id \
                 -community_id $community_id
         ]
-        bboard_admin_portlet::make_self_available $admin_portal_id
         bboard_admin_portlet::add_self_to_page $admin_portal_id $package_id
 
         # Set up permissions for basic members (Admins inherit no problem)
