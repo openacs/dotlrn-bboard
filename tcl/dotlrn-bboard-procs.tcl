@@ -45,13 +45,9 @@ namespace eval dotlrn_bboard {
     } {
 	Add the bboard applet
     } {
-	# Callback to get node_id from community
-	# REVISIT this (ben)
-	set node_id [site_node_id [ad_conn url]]
-
-	# create the bboard package instance (all in one, I've mounted it)
+	# Create and Mount
 	set package_key [package_key]
-	set package_id [site_node_mount_application -return package_id $node_id "$package_key" $package_key $package_key]
+	set package_id [dotlrn::instantiate_and_mount $community_id $package_key]
 
 	# set up a forum inside that instance
 	bboard_forum_new -bboard_id $package_id -short_name "Discussions"
