@@ -84,7 +84,7 @@ namespace eval dotlrn_bboard {
 	set page_id [dotlrn_community::get_page_id $community_id $user_id]
 	
 	# Get the package_id by callback
-	set package_id [dotlrn_community::get_package_id $community_id]
+	set package_id [dotlrn_community::get_applet_package_id $community_id dotlrn_bboard]
 
 	# Allow user to see the bboard forums
 	# nothing for now
