@@ -19,6 +19,12 @@ ad_library {
 
 namespace eval dotlrn_bboard {
     
+    ad_proc -public applet_key {} {
+	get the applet key
+    } {
+	return "dotlrn_bboard"
+    }
+
     ad_proc -public package_key {
     } {
 	get the package_key this applet deals with
@@ -49,8 +55,8 @@ namespace eval dotlrn_bboard {
 	set package_key [package_key]
 	set package_id [dotlrn::instantiate_and_mount $community_id $package_key]
 
-	# set up a forum inside that instance
-	bboard_forum_new -bboard_id $package_id -short_name "Discussions"
+	# set up a forum inside that instance, with context set to the package ID of the bboard package
+	bboard_forum_new -bboard_id $package_id -short_name "Discussions" -context_id $package_id
 
 	# get the portal_template_id by callback
 	set pt_id [dotlrn_community::get_portal_template_id $community_id]
@@ -115,7 +121,7 @@ namespace eval dotlrn_bboard {
 	set page_id [dotlrn_community::get_page_id $community_id $user_id]
 	
 	# Get the package_id by callback
-	set package_id [dotlrn_community::get_package_id $community_id]
+	set package_id [dotlrn_community::get_applet_package_id $community_id [applet_key]]
 
 	# Remove the portal element
 	bboard_portlet::remove_self_from_page $page_id $package_id
