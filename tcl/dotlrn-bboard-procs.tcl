@@ -148,14 +148,20 @@ namespace eval dotlrn_bboard {
 	bboard_portlet::make_self_available $portal_id
 
 	# Call the portal element to be added correctly
-	bboard_portlet::add_self_to_page $portal_id $package_id
+	set element_id [bboard_portlet::add_self_to_page $portal_id $package_id]
+
+        # Make sure that the group name is not displayed here
+        portal::set_element_param $element_id "display_group_name_p" "f"
 
 	# Now for the user workspace
 	set workspace_portal_id [dotlrn::get_workspace_portal_id $user_id]
 
 	# Add the portlet here
 	if { $workspace_portal_id != "" } {
-            bboard_portlet::add_self_to_page $workspace_portal_id $package_id
+            set element_id [bboard_portlet::add_self_to_page $workspace_portal_id $package_id]
+
+            # Make sure that the group name IS displayed here
+            portal::set_element_param $element_id "display_group_name_p" "t"
         }
     }
 
