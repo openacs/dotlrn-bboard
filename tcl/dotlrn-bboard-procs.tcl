@@ -172,10 +172,7 @@ namespace eval dotlrn_bboard {
         # remove the portlet 
         bboard_portlet::remove_self_from_page $portal_id $package_id
         
-        set auto_create_forum_p [oacs_util::parameter \
-            -package_key "dotlrn-bboard" \
-            -key "auto_create_forum_p"
-        ]
+        set auto_create_forum_p [parameter::get_from_package_key -package_key "dotlrn-bboard" -parameter auto_create_forum_p]
 
         if {[string equal $auto_create_forum_p "t"]} {
             ad_return_complaint 1 "no bboard delete proc"
