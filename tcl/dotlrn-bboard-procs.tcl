@@ -57,7 +57,10 @@ namespace eval dotlrn_bboard {
             dotlrn_applet::add_applet_to_dotlrn -applet_key [applet_key]
 
             # Mount the package
-            dotlrn_applet::mount -package_key "dotlrn-bboard" -url "bboard" -pretty_name "Bboards"
+            dotlrn_applet::mount \
+                    -package_key "dotlrn-bboard" \
+                    -url "bboard" \
+                    -pretty_name "Bboards"
         }
     }
 
@@ -134,7 +137,50 @@ namespace eval dotlrn_bboard {
     } {
         remove the applet from the given community
     } {
-        ad_return_complaint 1 "aks1"
+        set portal_id [dotlrn_community::get_portal_id \
+                -community_id $community_id
+        ]
+        
+
+        # ug, can't use the package_key proc here since this uses site_nodes::
+        # we need to use the name it's mounted with "forums" instead FIXME
+        set package_id [dotlrn::get_community_applet_package_id \
+            -community_id $community_id \
+            -package_key "forums"
+        ]
+
+        # revoke the member's privs
+        set members [dotlrn_community::get_rel_segment_id \
+                -community_id $community_id \
+                -rel_type dotlrn_member_rel
+        ]
+
+        permission::revoke -party_id $members -object_id $package_id -privilege bboard_read_forum
+        permission::revoke -party_id $members -object_id $package_id -privilege bboard_read_category
+        permission::revoke -party_id $members -object_id $package_id -privilege bboard_read_message
+        permission::revoke -party_id $members -object_id $package_id -privilege bboard_create_message
+        
+        # remove the admin portlet
+        set admin_portal_id [dotlrn_community::get_admin_portal_id \
+                -community_id $community_id
+        ]
+        bboard_admin_portlet::remove_self_from_page -portal_id $admin_portal_id
+
+        # remove the portlet 
+        bboard_portlet::remove_self_from_page $portal_id $package_id
+        
+        set auto_create_forum_p [oacs_util::parameter \
+            -package_key "dotlrn-bboard" \
+            -key "auto_create_forum_p"
+        ]
+
+        if {[string equal $auto_create_forum_p "t"]} {
+            ad_return_complaint 1 "no bboard delete proc"
+        }
+
+        # unmount from the site-map
+        set node_id [site_nodes::get_node_id_from_package_id -package_id $package_id]
+        site_node_delete_package_instance -node_id $node_id
     }
 
     ad_proc -public add_user {
