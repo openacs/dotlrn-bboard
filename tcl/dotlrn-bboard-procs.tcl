@@ -52,6 +52,13 @@ namespace eval dotlrn_bboard {
 	# set up a forum inside that instance
 	bboard_forum_new -bboard_id $package_id -short_name "Discussions"
 
+	# get the portal_template_id by callback
+	set pt_id [dotlrn_community::get_portal_template_id $community_id]
+
+	# set up the DS for the portal template
+	bboard_portlet::make_self_available $pt_id
+	bboard_portlet::add_self_to_page $pt_id $package_id
+
 	# return the package_id
 	return $package_id
     }
