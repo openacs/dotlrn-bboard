@@ -33,6 +33,13 @@ namespace eval dotlrn_bboard {
 	return "bboard-portlet"
     }
 
+    ad_proc -public get_pretty_name {
+    } {
+	returns the pretty name
+    } {
+	return "dotLRN Discussion Forums"
+    }
+
     ad_proc -public add_applet {
 	community_id
     } {
@@ -44,10 +51,10 @@ namespace eval dotlrn_bboard {
 
 	# create the bboard package instance (all in one, I've mounted it)
 	set package_key [package_key]
-	set package_id [site_node_mount_application -return package_id $node_id $package_key $package_key $package_key]
+	set package_id [site_node_mount_application -return package_id $node_id "$package_key" $package_key $package_key]
 
 	# set up a forum inside that instance
-	bboard_forum_new -context_id $package_id -short_name "Discussions"
+	bboard_forum_new -bboard_id $package_id -short_name "Discussions"
 
 	# return the package_id
 	return $package_id
