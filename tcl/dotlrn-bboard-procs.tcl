@@ -47,11 +47,11 @@ namespace eval dotlrn_bboard {
     }
 
     ad_proc -public add_applet {
-	community_id
     } {
 	Add the bboard applet to dotlrn - for one-time init
+	Must be repeatable!
     } {
-
+	return 1
     }
 
     ad_proc -public add_applet_to_community {
