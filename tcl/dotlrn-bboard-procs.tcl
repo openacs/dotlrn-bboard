@@ -77,7 +77,7 @@ namespace eval dotlrn_bboard {
         ]
 
         if {[dotlrn_community::dummy_comm_p -community_id $community_id]} {
-            bboard_portlet::add_self_to_page $portal_id 0
+            bboard_portlet::add_self_to_page -portal_id $portal_id -package_id 0
             return
         }
 
@@ -102,18 +102,18 @@ namespace eval dotlrn_bboard {
             # set up a forum inside that instance, with context set to the
             # package ID of the bboard package
             bboard_forum_new \
-                    -bboard_id $package_id \
-                    -short_name $auto_create_forum_name \
-                    -context_id $package_id
+                -bboard_id $package_id \
+                -short_name $auto_create_forum_name \
+                -context_id $package_id
         }
 
-        bboard_portlet::add_self_to_page $portal_id $package_id
+        bboard_portlet::add_self_to_page -portal_id $portal_id -package_id $package_id
 
         # set up the DS for the admin page
         set admin_portal_id [dotlrn_community::get_admin_portal_id \
                 -community_id $community_id
         ]
-        bboard_admin_portlet::add_self_to_page $admin_portal_id $package_id
+        bboard_admin_portlet::add_self_to_page -portal_id $admin_portal_id -package_id $package_id
 
         # Set up permissions for basic members (Admins inherit no problem)
         set members [dotlrn_community::get_rel_segment_id \
@@ -163,7 +163,7 @@ namespace eval dotlrn_bboard {
         ]
         set portal_id [dotlrn::get_workspace_portal_id $user_id]
 
-        set element_id [bboard_portlet::add_self_to_page $portal_id $package_id]
+        set element_id [bboard_portlet::add_self_to_page -portal_id $portal_id -package_id $package_id]
         portal::set_element_param $element_id "display_group_name_p" "t"
     }
 

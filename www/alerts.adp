@@ -21,7 +21,7 @@ made within that given thread.
 <if @forum_subs:rowcount@ gt 0>
 <multiple name="forum_subs">
 <% set url_prefix [site_nodes::get_url_from_package_id -package_id $forum_subs(bboard_id)] %>
- <li><a href="@url_prefix@forum?forum_id=@forum_subs.forum_id@"><%= [site_nodes::get_parent_name -instance_id $forum_subs(bboard_id)] %> - @forum_subs.name@</a> [<a href="@url_prefix@forum-unsubscribe?return_url=@this_url@&forum_id=@forum_subs.forum_id@">Unsubscribe</a>]
+ <li><a href="@url_prefix@forum?forum_id=@forum_subs.forum_id@"><%= [site_nodes::get_parent_name -package_id $forum_subs(bboard_id)] %> - @forum_subs.name@</a> [<a href="@url_prefix@forum-unsubscribe?return_url=@this_url@&forum_id=@forum_subs.forum_id@">Unsubscribe</a>]
 </multiple>
 </if>
 <else>
@@ -37,7 +37,7 @@ made within that given thread.
 <if @category_subs:rowcount@ gt 0>
 <multiple name="category_subs">
 <% set url_prefix [site_nodes::get_url_from_package_id -package_id $category_subs(bboard_id)] %>
- <li><a href="@url_prefix@forum-by-category?forum_id=@category_subs.forum_id@&category_id=@category_subs.category_id@"><%= [site_nodes::get_parent_name -instance_id $category_subs(bboard_id)] %> - @category_subs.bboard_name@ - @category_subs.name@</a> [<a href="@url_prefix@category-unsubscribe?forum_id=@category_subs.forum_id@&category_id=@category_subs.category_id@&sub_page=t&return_url=@this_url@">Unsubscribe</a>]
+ <li><a href="@url_prefix@forum-by-category?forum_id=@category_subs.forum_id@&category_id=@category_subs.category_id@"><%= [site_nodes::get_parent_name -package_id $category_subs(bboard_id)] %> - @category_subs.bboard_name@ - @category_subs.name@</a> [<a href="@url_prefix@category-unsubscribe?forum_id=@category_subs.forum_id@&category_id=@category_subs.category_id@&sub_page=t&return_url=@this_url@">Unsubscribe</a>]
 </multiple>
 </if>
 <else>
@@ -52,7 +52,7 @@ made within that given thread.
 <if @thread_subs:rowcount@ gt 0>
 <multiple name="thread_subs">
 <% set url_prefix [site_nodes::get_url_from_package_id -package_id $thread_subs(bboard_id)] %>
- <li><a href="@url_prefix@<%= [bboard_message_url @thread_subs.thread_id@ @thread_subs.forum_id@]%>"><%= [site_nodes::get_parent_name -instance_id $thread_subs(bboard_id)] %> - @thread_subs.bboard_name@ - @thread_subs.name@</a> [<a href="@url_prefix@message-unsubscribe?forum_id=@thread_subs.forum_id@&message_id=@thread_subs.thread_id@&sub_page=t&return_url=@this_url@">Unsubscribe</a>]
+ <li><a href="@url_prefix@<%= [bboard_message_url @thread_subs.thread_id@ @thread_subs.forum_id@]%>"><%= [site_nodes::get_parent_name -package_id $thread_subs(bboard_id)] %> - @thread_subs.bboard_name@ - @thread_subs.name@</a> [<a href="@url_prefix@message-unsubscribe?forum_id=@thread_subs.forum_id@&message_id=@thread_subs.thread_id@&sub_page=t&return_url=@this_url@">Unsubscribe</a>]
 </multiple>
 </if>
 <else>
