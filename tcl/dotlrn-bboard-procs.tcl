@@ -183,7 +183,7 @@ namespace eval dotlrn_bboard {
 	# Remove from the main workspace
 	set workspace_portal_id [dotlrn::get_workspace_portal_id $user_id]
 
-	# Add the portlet here
+	# Remove the portlet here
         if { $workspace_portal_id != "" } {
             bboard_portlet::remove_self_from_page $workspace_portal_id $package_id
         }
