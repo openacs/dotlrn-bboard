@@ -76,6 +76,11 @@ namespace eval dotlrn_bboard {
 	bboard_portlet::make_self_available $pt_id
 	bboard_portlet::add_self_to_page $pt_id $package_id
 
+        # set up the DS for the admin page
+        set admin_portal_id [dotlrn_community::get_community_admin_portal_id $community_id]
+        bboard_admin_portlet::make_self_available $admin_portal_id
+        bboard_admin_portlet::add_self_to_page $admin_portal_id $package_id
+
 	# Set up permissions for basic members (Admins inherit no problem)
 	set members [dotlrn_community::get_rel_segment_id -community_id $community_id -rel_type dotlrn_member_rel]
 	ad_permission_grant $members $package_id bboard_read_forum
