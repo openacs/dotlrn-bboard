@@ -52,7 +52,7 @@ namespace eval dotlrn_bboard {
         # register/activate self with dotlrn
         # our service contract is in the db, but we must tell dotlrn
         # that we exist and want to be active
-        dotlrn_community::add_applet_to_dotlrn -applet_key "dotlrn_bboard"
+        dotlrn_applet::add_applet_to_dotlrn -applet_key "dotlrn_bboard"
     }
 
     ad_proc -public add_applet_to_community {
