@@ -109,8 +109,8 @@ namespace eval dotlrn_bboard {
     } {
 	Add a user to a specific dotlrn community
     } {
-	# Get the page_id by callback
-	set page_id [dotlrn_community::get_page_id $community_id $user_id]
+	# Get the portal_id by callback
+	set portal_id [dotlrn_community::get_portal_id $community_id $user_id]
 	
 	# Get the package_id by callback
 	set package_id [dotlrn_community::get_applet_package_id $community_id dotlrn_bboard]
@@ -119,16 +119,16 @@ namespace eval dotlrn_bboard {
 	# nothing for now
 
 	# Make bboard DS available to this page
-	bboard_portlet::make_self_available $page_id
+	bboard_portlet::make_self_available $portal_id
 
 	# Call the portal element to be added correctly
-	bboard_portlet::add_self_to_page $page_id $package_id
+	bboard_portlet::add_self_to_page $portal_id $package_id
 
 	# Now for the user workspace
-	set workspace_page_id [dotlrn_community::get_workspace_page_id $user_id]
+	set workspace_portal_id [dotlrn::get_workspace_portal_id $user_id]
 
 	# Add the portlet here
-	bboard_portlet::add_self_to_page $workspace_page_id $package_id
+	bboard_portlet::add_self_to_page $workspace_portal_id $package_id
     }
 
     ad_proc -public remove_user {
@@ -137,26 +137,26 @@ namespace eval dotlrn_bboard {
     } {
 	Remove a user from a community
     } {
-	# Get the page_id
-	set page_id [dotlrn_community::get_page_id $community_id $user_id]
+	# Get the portal_id
+	set portal_id [dotlrn_community::get_portal_id $community_id $user_id]
 	
 	# Get the package_id by callback
 	set package_id [dotlrn_community::get_applet_package_id $community_id [applet_key]]
 
 	# Remove the portal element
-	bboard_portlet::remove_self_from_page $page_id $package_id
+	bboard_portlet::remove_self_from_page $portal_id $package_id
 
 	# Buh Bye.
-	bboard_portlet::make_self_unavailable $page_id
+	bboard_portlet::make_self_unavailable $portal_id
 
 	# remove user permissions to see bboards
 	# nothing to do here
 
 	# Remove from the main workspace
-	set workspace_page_id [dotlrn_community::get_workspace_page_id $user_id]
+	set workspace_portal_id [dotlrn::get_workspace_portal_id $user_id]
 
 	# Add the portlet here
-	bboard_portlet::remove_self_from_page $workspace_page_id $package_id
+	bboard_portlet::remove_self_from_page $workspace_portal_id $package_id
     }
 	
 }
