@@ -276,7 +276,8 @@ namespace eval dotlrn_bboard {
         Clone this applet's content from the old community to the new one
     } {
         ns_log notice "Cloning: [applet_key]"
-        dotlrn_bboard::add_applet_to_community $new_community_id
+        return [dotlrn_bboard::add_applet_to_community $new_community_id]
+        
     }
 
 
