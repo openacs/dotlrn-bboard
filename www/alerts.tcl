@@ -11,9 +11,9 @@ ad_page_contract {
     thread_subs:multirow
 }
 
-ad_maybe_redirect_for_registration
+auth::require_login
 
-set user_id [ad_verify_and_get_user_id]
+set user_id [ad_conn user_id]
 
 # three sorts of subscriptions:
 #  forums
