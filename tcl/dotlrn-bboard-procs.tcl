@@ -73,6 +73,13 @@ namespace eval dotlrn_bboard {
 	bboard_portlet::make_self_available $pt_id
 	bboard_portlet::add_self_to_page $pt_id $package_id
 
+	# Set up permissions for basic members (Admins inherit no problem)
+	set members [dotlrn_admin_rel::get_rel_segment_id -community_id $community_id -rel_type dotlrn_member_rel]
+	ad_permission_grant $members $package_id bboard_read_forum
+	ad_permission_grant $members $package_id bboard_read_category
+	ad_permission_grant $members $package_id bboard_read_message
+	ad_permission_grant $members $package_id bboard_create_message
+
 	# return the package_id
 	return $package_id
     }
@@ -99,7 +106,7 @@ namespace eval dotlrn_bboard {
 	For one-time init stuff
 	
     } {
-
+	
     }
 
 
