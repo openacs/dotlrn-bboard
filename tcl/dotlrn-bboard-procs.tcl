@@ -157,30 +157,42 @@ namespace eval dotlrn_bboard {
     } {
         Add a user to a specific dotlrn community
     } {
-        # Get the portal_id by callback
+        # Get the package_id by callback
+        set package_id [dotlrn_community::get_applet_package_id \
+                $community_id \
+                dotlrn_bboard
+        ]
+
+        # Get the personal per comm portal_id by callback
         set portal_id [dotlrn_community::get_portal_id $community_id $user_id]
 
-        # Get the package_id by callback
-        set package_id [dotlrn_community::get_applet_package_id $community_id dotlrn_bboard]
+	if {[exists_and_not_null $portal_id]} {
+            # we have personal per comm portals
 
-        # Allow user to see the bboard forums
-        # nothing for now
+            # Make bboard DS available to this page
+            bboard_portlet::make_self_available $portal_id
+            
+            # Call the portal element to be added correctly
+            set element_id [bboard_portlet::add_self_to_page \
+                    $portal_id \
+                    $package_id
+            ]
 
-        # Make bboard DS available to this page
-        bboard_portlet::make_self_available $portal_id
-
-        # Call the portal element to be added correctly
-        set element_id [bboard_portlet::add_self_to_page $portal_id $package_id]
-
-        # Make sure that the group name is not displayed here
-        portal::set_element_param $element_id "display_group_name_p" "f"
-
+            # Make sure that the group name is not displayed here
+            portal::set_element_param $element_id \
+                    "display_group_name_p" \
+                    "f"
+        }
+        
         # Now for the user workspace
         set workspace_portal_id [dotlrn::get_workspace_portal_id $user_id]
 
         # Add the portlet here
-        if { $workspace_portal_id != "" } {
-            set element_id [bboard_portlet::add_self_to_page $workspace_portal_id $package_id]
+        if {[exists_and_not_null $workspace_portal_id]} {
+            set element_id [bboard_portlet::add_self_to_page \
+                    $workspace_portal_id \
+                    $package_id
+            ]
 
             # Make sure that the group name IS displayed here
             portal::set_element_param $element_id "display_group_name_p" "t"
