@@ -89,6 +89,9 @@ namespace eval dotlrn_bboard {
 	# Allow user to see the bboard forums
 	# nothing for now
 
+	# Make bboard DS available to this page
+	bboard_portlet::make_self_available $page_id
+
 	# Call the portal element to be added correctly
 	bboard_portlet::add_self_to_page $page_id $package_id
     }
@@ -107,6 +110,9 @@ namespace eval dotlrn_bboard {
 
 	# Remove the portal element
 	bboard_portlet::remove_self_from_page $page_id $package_id
+
+	# Buh Bye.
+	bboard_portlet::make_self_unavailable $page_id
 
 	# remove user permissions to see bboards
 	# nothing to do here
