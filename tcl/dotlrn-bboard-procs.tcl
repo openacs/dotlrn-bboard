@@ -53,6 +53,9 @@ namespace eval dotlrn_bboard {
         # our service contract is in the db, but we must tell dotlrn
         # that we exist and want to be active
         dotlrn_applet::add_applet_to_dotlrn -applet_key "dotlrn_bboard"
+
+        # Mount the package
+        dotlrn_applet::mount -package_key "dotlrn-bboard" -url "bboard" -pretty_name "Bboards"
     }
 
     ad_proc -public add_applet_to_community {
