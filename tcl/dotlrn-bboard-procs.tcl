@@ -90,6 +90,12 @@ namespace eval dotlrn_bboard {
 
 	# Call the portal element to be added correctly
 	bboard_portlet::add_self_to_page $page_id $package_id
+
+	# Now for the user workspace
+	set workspace_page_id [dotlrn_community::get_workspace_page_id $user_id]
+
+	# Add the portlet here
+	bboard_portlet::add_self_to_page $workspace_page_id $package_id
     }
 
     ad_proc -public remove_user {
@@ -112,6 +118,12 @@ namespace eval dotlrn_bboard {
 
 	# remove user permissions to see bboards
 	# nothing to do here
+
+	# Remove from the main workspace
+	set workspace_page_id [dotlrn_community::get_workspace_page_id $user_id]
+
+	# Add the portlet here
+	bboard_portlet::remove_self_from_page $workspace_page_id $package_id
     }
 	
 }
