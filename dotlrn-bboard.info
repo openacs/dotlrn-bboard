@@ -7,14 +7,14 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>t</singleton-p>
 
-    <version name="0.1a" url="http://openforce.net/software/dotlrn/dotlrn-bboard/0.1a">
+    <version name="2.0.2" url="http://openforce.net/software/dotlrn/dotlrn-bboard/2.0.2.apm">
     <database-support>
         <database>oracle</database>
         <database>postgresql</database>
     </database-support>
         <owner url="mailto:ben@openforce.net">Ben Adida</owner>
 
-        <provides url="dotlrn-bboard" version="0.1a"/>
+        <provides url="dotlrn-bboard" version="2.0.2"/>
         <requires url="bboard-portlet" version="0.1a"/>
         <requires url="dotlrn" version="1.0"/>
 
