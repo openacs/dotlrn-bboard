@@ -164,8 +164,11 @@ namespace eval dotlrn_bboard {
         set admin_portal_id [dotlrn_community::get_admin_portal_id \
                 -community_id $community_id
         ]
+
+
         bboard_admin_portlet::remove_self_from_page -portal_id $admin_portal_id
 
+        # aks fixme - should use remove_portlet below
         # remove the portlet 
         bboard_portlet::remove_self_from_page $portal_id $package_id
         
@@ -219,15 +222,17 @@ namespace eval dotlrn_bboard {
     } {
         Remove a user from a community
     } {
-        set package_id [dotlrn_community::get_applet_package_id \
-                $community_id \
-                [applet_key]
-        ]
+        set package_id [dotlrn_community::get_applet_package_id $community_id [applet_key]]
         set portal_id [dotlrn::get_workspace_portal_id $user_id]
 
-        bboard_portlet::remove_self_from_page $portal_id $package_id
-    }
+        set args [ns_set create args]
+        ns_set put $args user_id $user_id
+        ns_set put $args community_id $community_id
+        ns_set put $args package_id $package_id
+        set list_args [list $portal_id $args]
 
+        remove_portlet $portal_id $args
+    }
     ad_proc -public add_portlet {
         args
     } {
@@ -240,16 +245,31 @@ namespace eval dotlrn_bboard {
         ** Error in [get_pretty_name]: 'add_portlet' not implemented!"
     }
 
+
     ad_proc -public remove_portlet {
+        portal_id
         args
     } {
         A helper proc to remove the underlying portlet from the given portal. 
         
-        @param args a list-ified array of args defined in remove_applet_from_community
-    } {
-        ns_log notice "** Error in [get_pretty_name]: 'remove_portlet' not implemented!"
-        ad_return_complaint 1  "Please notifiy the administrator of this error:
-        ** Error in [get_pretty_name]: 'remove_portlet' not implemented!"
+        @param portal_id
+        @param args A list of key-value pairs (possibly user_id, community_id, and more)
+    } { 
+        set user_id [ns_set get $args "user_id"]
+        set community_id [ns_set get $args "community_id"]
+
+        if {![empty_string_p $user_id]} {
+            # the portal_id is a user's portal
+            set bboard_package_id [ns_set get $args "bboard_package_id"]
+        } elseif {![empty_string_p $community_id]} {
+            # the portal_id is a community portal
+            ad_return_complaint 1  "[applet_key] aks1 unimplimented"
+        } else {
+            # the portal_id is a portal template
+            ad_return_complaint 1  "[applet_key] aks2 unimplimented"
+        }
+
+        bboard_portlet::remove_self_from_page $portal_id $bboard_package_id
     }
 
     ad_proc -public clone {
