@@ -68,10 +68,12 @@ namespace eval dotlrn_bboard {
         # register/activate self with dotlrn
         # our service contract is in the db, but we must tell dotlrn
         # that we exist and want to be active
-        dotlrn_applet::add_applet_to_dotlrn -applet_key "dotlrn_bboard"
+        if {![dotlrn_applet::is_applet_mounted -url "bboard"]} {
+            dotlrn_applet::add_applet_to_dotlrn -applet_key "dotlrn_bboard"
 
-        # Mount the package
-        dotlrn_applet::mount -package_key "dotlrn-bboard" -url "bboard" -pretty_name "Bboards"
+            # Mount the package
+            dotlrn_applet::mount -package_key "dotlrn-bboard" -url "bboard" -pretty_name "Bboards"
+        }
     }
 
     ad_proc -public add_applet_to_community {
@@ -79,6 +81,17 @@ namespace eval dotlrn_bboard {
     } {
         Add the bboard applet to a dotlrn community
     } {
+        # get the portal_template_id by callback
+        set pt_id [dotlrn_community::get_portal_template_id $community_id]
+
+        # set up the DS for the portal template
+        bboard_portlet::make_self_available $pt_id
+
+        if {[dotlrn_community::dummy_comm_p -community_id $community_id]} {
+            bboard_portlet::add_self_to_page $pt_id 0
+            return
+        }
+
         # Create and Mount
         set package_key [package_key]
         set package_id [dotlrn::instantiate_and_mount -mount_point "forums" $community_id $package_key]
@@ -100,11 +113,6 @@ namespace eval dotlrn_bboard {
                     -context_id $package_id
         }
 
-        # get the portal_template_id by callback
-        set pt_id [dotlrn_community::get_portal_template_id $community_id]
-
-        # set up the DS for the portal template
-        bboard_portlet::make_self_available $pt_id
         bboard_portlet::add_self_to_page $pt_id $package_id
 
         # set up the DS for the admin page
