@@ -45,7 +45,7 @@ namespace eval dotlrn_bboard {
     } {
 	return "dotLRN Discussion Forums"
     }
-r
+
     ad_proc -public add_applet {
     } {
 	Add the bboard applet to dotlrn - for one-time init
