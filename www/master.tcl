@@ -18,7 +18,7 @@
 #
 
 # Since we're always within a portal
-set portal_id [dotlrn::get_workspace_portal_id [ad_get_user_id]]
+set portal_id [dotlrn::get_portal_id -user_id [ad_get_user_id]]
 
 # here's a bunch of stuff that an adp may optionally set to alter the
 # master's behavior

@@ -25,24 +25,31 @@ ad_library {
 
 namespace eval dotlrn_bboard {
 
-    ad_proc -public applet_key {} {
-        get the applet key
+    ad_proc -public applet_key {
+    } {
+        What's my applet key?
     } {
         return "dotlrn_bboard"
     }
 
+    ad_proc -public my_package_key {
+    } {
+        What's my package key?
+    } {
+        return "dotlrn-bboard"
+    }
+
     ad_proc -public package_key {
     } {
-        get the package_key this applet deals with
+        What package does this applet deal with?
     } {
         return "sloan-bboard"
     }
 
     ad_proc -public get_pretty_name {
     } {
-        returns the pretty name
     } {
-        return "dotLRN Discussion Forums"
+        return "Discussion Forums"
     }
 
     ad_proc -public add_applet {
@@ -58,7 +65,7 @@ namespace eval dotlrn_bboard {
 
             # Mount the package
             dotlrn_applet::mount \
-                    -package_key "dotlrn-bboard" \
+                -package_key [my_package_key] \
                     -url "bboard" \
                     -pretty_name "Bboards"
         }
@@ -68,6 +75,7 @@ namespace eval dotlrn_bboard {
     } {
         remove the applet from dotlrn
     } {
+        ad_return_complaint 1 "[applet_key] remove_applet not implimented!"
     }
 
     ad_proc -public add_applet_to_community {
@@ -75,48 +83,33 @@ namespace eval dotlrn_bboard {
     } {
         Add the bboard applet to a dotlrn community
     } {
-        set portal_id [dotlrn_community::get_portal_id \
-                -community_id $community_id
-        ]
-
-        if {[dotlrn_community::dummy_comm_p -community_id $community_id]} {
-            bboard_portlet::add_self_to_page -portal_id $portal_id -package_id 0
-            return
-        }
+        #
+        # set up stuff
+        #
 
         # Create and Mount
         set package_id [dotlrn::instantiate_and_mount \
-                -mount_point "forums" \
-                $community_id\
-                [package_key]
+                            -mount_point "forums" \
+                            $community_id \
+                            [package_key]
         ]
 
-        set auto_create_forum_p [ad_parameter \
-            -package_id [apm_package_id_from_key "dotlrn-bboard"] \
-            "auto_create_forum_p" "f" \
+        set auto_create_forum_p [parameter::get_from_package_key \
+                                     -package_key [my_package_key] \
+                                     -parameter "auto_create_forum_p"
         ]
 
-        set auto_create_forum_name [ad_parameter \
-            -package_id [apm_package_id_from_key "dotlrn-bboard"] \
-            "auto_create_forum_name" "Discussions" \
+        set auto_create_forum_name [parameter::get_from_package_key \
+                                        -package_key [my_package_key] \
+                                        -parameter "auto_create_forum_name" 
         ]
 
-        if {$auto_create_forum_p == "t"} {
-            # set up a forum inside that instance, with context set to the
-            # package ID of the bboard package
+        if {[string equal $auto_create_forum_p "t"]} {
             bboard_forum_new \
                 -bboard_id $package_id \
                 -short_name $auto_create_forum_name \
                 -context_id $package_id
         }
-
-        bboard_portlet::add_self_to_page -portal_id $portal_id -package_id $package_id
-
-        # set up the DS for the admin page
-        set admin_portal_id [dotlrn_community::get_admin_portal_id \
-                -community_id $community_id
-        ]
-        bboard_admin_portlet::add_self_to_page -portal_id $admin_portal_id -package_id $package_id
 
         # Set up permissions for basic members (Admins inherit no problem)
         set members [dotlrn_community::get_rel_segment_id \
@@ -128,6 +121,34 @@ namespace eval dotlrn_bboard {
         ad_permission_grant $members $package_id bboard_read_message
         ad_permission_grant $members $package_id bboard_create_message
 
+        #
+        # portlet stuff
+        #
+
+        # set up the admin portlet
+
+        set admin_portal_id [dotlrn_community::get_admin_portal_id \
+                                 -community_id $community_id
+        ]
+
+        bboard_admin_portlet::add_self_to_page \
+            -portal_id $admin_portal_id \
+            -package_id $package_id
+
+        # set up the bboard portlet for this community
+
+        set portal_id [dotlrn_community::get_portal_id \
+                           -community_id $community_id
+        ]
+
+        # add the portlet to the comm's portal using add_portlet_helper
+        set args [ns_set create]
+        ns_set put $args package_id $package_id
+        ns_set put $args display_group_name_p f
+        ns_set put $args param_action "overwrite"
+
+        dotlrn_bboard::add_portlet_helper $portal_id $args
+
         # return the package_id
         return $package_id
     }
@@ -137,64 +158,23 @@ namespace eval dotlrn_bboard {
     } {
         remove the applet from the given community
     } {
-        set portal_id [dotlrn_community::get_portal_id \
-                -community_id $community_id
-        ]
-        
-
-        # ug, can't use the package_key proc here since this uses site_nodes::
-        # we need to use the name it's mounted with "forums" instead FIXME
-        set package_id [dotlrn::get_community_applet_package_id \
-            -community_id $community_id \
-            -package_key "forums"
-        ]
-
-        # revoke the member's privs
-        set members [dotlrn_community::get_rel_segment_id \
-                -community_id $community_id \
-                -rel_type dotlrn_member_rel
-        ]
-
-        permission::revoke -party_id $members -object_id $package_id -privilege bboard_read_forum
-        permission::revoke -party_id $members -object_id $package_id -privilege bboard_read_category
-        permission::revoke -party_id $members -object_id $package_id -privilege bboard_read_message
-        permission::revoke -party_id $members -object_id $package_id -privilege bboard_create_message
-        
-        # remove the admin portlet
-        set admin_portal_id [dotlrn_community::get_admin_portal_id \
-                -community_id $community_id
-        ]
-
-
-        bboard_admin_portlet::remove_self_from_page -portal_id $admin_portal_id
-
-        # aks fixme - should use remove_portlet below
-        # remove the portlet 
-        bboard_portlet::remove_self_from_page $portal_id $package_id
-        
-        set auto_create_forum_p [parameter::get_from_package_key -package_key "dotlrn-bboard" -parameter auto_create_forum_p]
-
-        if {[string equal $auto_create_forum_p "t"]} {
-            ad_return_complaint 1 "no bboard delete proc"
-        }
-
-        # unmount from the site-map
-        set node_id [site_nodes::get_node_id_from_package_id -package_id $package_id]
-        site_node_delete_package_instance -node_id $node_id
+        ad_return_complaint 1 "[applet_key] remove_applet_from_community not implimented!"
     }
 
     ad_proc -public add_user {
-        community_id
+        user_id
     } {
         Called when the user is initially added as a dotlrn user.
-        For one-time init stuff
+        For one-time init stuff. 
     } {
+        # noop
     }
 
     ad_proc -public remove_user {
         user_id
     } {
     } {
+        # noop
     }
 
     ad_proc -public add_user_to_community {
@@ -203,14 +183,21 @@ namespace eval dotlrn_bboard {
     } {
         Add a user to a specific dotlrn community
     } {
+        set portal_id [dotlrn::get_portal_id -user_id $user_id]
         set package_id [dotlrn_community::get_applet_package_id \
-                $community_id \
-                [applet_key]
+                            $community_id \
+                            [applet_key]
         ]
-        set portal_id [dotlrn::get_workspace_portal_id $user_id]
+        set args [ns_set create]
+        ns_set put $args package_id $package_id
+        ns_set put $args param_action "append"
+        
+        # don't use the cached version
+        dotlrn_bboard::add_portlet_helper \
+            [dotlrn::get_portal_id_not_cached -user_id $user_id] \
+            $args
 
-        set element_id [bboard_portlet::add_self_to_page -portal_id $portal_id -package_id $package_id]
-        portal::set_element_param $element_id "display_group_name_p" "t"
+        dotlrn_bboard::add_portlet_helper $portal_id $args
     }
 
     ad_proc -public remove_user_from_community {
@@ -219,29 +206,55 @@ namespace eval dotlrn_bboard {
     } {
         Remove a user from a community
     } {
-        set package_id [dotlrn_community::get_applet_package_id $community_id [applet_key]]
-        set portal_id [dotlrn::get_workspace_portal_id $user_id]
+        set portal_id [dotlrn::get_portal_id -user_id $user_id]
+        set package_id [dotlrn_community::get_applet_package_id \
+                            $community_id \
+                            [applet_key]
+        ]
 
-        set args [ns_set create args]
-        ns_set put $args user_id $user_id
-        ns_set put $args community_id $community_id
+        set args [ns_set create]
         ns_set put $args package_id $package_id
-        set list_args [list $portal_id $args]
 
         remove_portlet $portal_id $args
     }
     ad_proc -public add_portlet {
-        args
+        portal_id
     } {
-        A helper proc to add the underlying portlet to the given portal. 
-        
-        @param args a list-ified array of args defined in add_applet_to_community
+        A helper proc to set up default params for templates.
+
+        @param portal_id
     } {
-        ns_log notice "** Error in [get_pretty_name]: 'add_portlet' not implemented!"
-        ad_return_complaint 1  "Please notifiy the administrator of this error:
-        ** Error in [get_pretty_name]: 'add_portlet' not implemented!"
+        set args [ns_set create]
+        ns_set put $args package_id 0
+        ns_set put $args display_group_name_p f
+        ns_set put $args param_action "overwrite"
+
+        set type [dotlrn::get_type_from_portal_id -portal_id $portal_id]
+
+        if {[string equal $type "user"]} {
+            # portal_id is a user portal template
+            ns_set put $args display_group_name_p t
+        }
+
+        add_portlet_helper $portal_id $args
     }
 
+    ad_proc -public add_portlet_helper {
+        portal_id
+        args
+    } {
+        This does the call to add the portlet to the given portal.
+        Params for the portlet are set by the calllers.
+        
+        @param portal_id
+        @param args An ns_set of params
+    } { 
+        bboard_portlet::add_self_to_page \
+            -portal_id $portal_id \
+            -package_id [ns_set get $args "package_id"] \
+            -param_action [ns_set get $args "param_action"] \
+            -display_group_name_p [ns_set get $args "display_group_name_p"]
+    }
 
     ad_proc -public remove_portlet {
         portal_id
@@ -250,23 +263,10 @@ namespace eval dotlrn_bboard {
         A helper proc to remove the underlying portlet from the given portal. 
         
         @param portal_id
-        @param args A list of key-value pairs (possibly user_id, community_id, and more)
+        @param args An ns_set of args
     } { 
-        set user_id [ns_set get $args "user_id"]
-        set community_id [ns_set get $args "community_id"]
-
-        if {![empty_string_p $user_id]} {
-            # the portal_id is a user's portal
-            set bboard_package_id [ns_set get $args "bboard_package_id"]
-        } elseif {![empty_string_p $community_id]} {
-            # the portal_id is a community portal
-            ad_return_complaint 1  "[applet_key] aks1 unimplimented"
-        } else {
-            # the portal_id is a portal template
-            ad_return_complaint 1  "[applet_key] aks2 unimplimented"
-        }
-
-        bboard_portlet::remove_self_from_page $portal_id $bboard_package_id
+        set package_id [ns_set get $args "package_id"]
+        bboard_portlet::remove_self_from_page $portal_id $package_id
     }
 
     ad_proc -public clone {
@@ -275,9 +275,9 @@ namespace eval dotlrn_bboard {
     } {
         Clone this applet's content from the old community to the new one
     } {
-        ns_log notice "** Error in [get_pretty_name] 'clone' not implemented!"
-        ad_return_complaint 1  "Please notifiy the administrator of this error:
-        ** Error in [get_pretty_name]: 'clone' not implemented!"
+        ns_log notice "Cloning: [applet_key]"
+        dotlrn_bboard::add_applet_to_community $new_community_id
     }
+
 
 }
