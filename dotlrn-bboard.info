@@ -6,7 +6,6 @@
     <pretty-plural>dotLRN BBoard Applets</pretty-plural>
     <initial-install-p>f</initial-install-p>
     <singleton-p>t</singleton-p>
-    <maturity>4</maturity>
 
     <version name="2.0.2" url="http://openforce.net/software/dotlrn/dotlrn-bboard/2.0.2.apm">
     <database-support>
@@ -14,6 +13,7 @@
         <database>postgresql</database>
     </database-support>
         <owner url="mailto:ben@openforce.net">Ben Adida</owner>
+        <maturity>4</maturity>
 
         <provides url="dotlrn-bboard" version="2.0.2"/>
         <requires url="bboard-portlet" version="0.1a"/>
