@@ -75,7 +75,7 @@ namespace eval dotlrn_bboard {
     } {
         remove the applet from dotlrn
     } {
-        ad_return_complaint 1 "[applet_key] remove_applet not implimented!"
+        ad_return_complaint 1 "[applet_key] remove_applet not implemented!"
     }
 
     ad_proc -public add_applet_to_community {
@@ -158,7 +158,7 @@ namespace eval dotlrn_bboard {
     } {
         remove the applet from the given community
     } {
-        ad_return_complaint 1 "[applet_key] remove_applet_from_community not implimented!"
+        ad_return_complaint 1 "[applet_key] remove_applet_from_community not implemented!"
     }
 
     ad_proc -public add_user {
